@@ -1,0 +1,3 @@
+rootProject.name = "MagicalXmppSDK"
+include ':app'
+include ':magicalxmppsdk'
