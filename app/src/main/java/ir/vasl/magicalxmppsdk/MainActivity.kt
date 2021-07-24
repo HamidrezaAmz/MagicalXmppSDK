@@ -17,6 +17,8 @@ class MainActivity : AppCompatActivity(), MagicalXmppSDKInterface, View.OnClickL
     private lateinit var binding: ActivityMainBinding
     private lateinit var magicalXmppSDKInstance: MagicalXmppSDK
 
+    private lateinit var adapter: MessageAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -32,6 +34,9 @@ class MainActivity : AppCompatActivity(), MagicalXmppSDKInterface, View.OnClickL
             .setPort(PublicValue.TEST_PORT)
             .setCallback(this)
             .build()
+
+        adapter = MessageAdapter()
+        binding.rvMessages.adapter = adapter
     }
 
     override fun onClick(v: View?) {
@@ -53,6 +58,9 @@ class MainActivity : AppCompatActivity(), MagicalXmppSDKInterface, View.OnClickL
     override fun onNewIncomingMessage(magicalIncomingMessage: MagicalIncomingMessage) {
         binding.textViewConnectionIncomingMessage.text =
             "Incoming Message: ${magicalIncomingMessage.message}"
+        var messages :ArrayList<MagicalIncomingMessage> = adapter.currentList as ArrayList<MagicalIncomingMessage>
+        messages.add(magicalIncomingMessage)
+//        adapter.submitList(messages as List<MagicalIncomingMessage>)
     }
 
     override fun onNewOutgoingMessage(magicalOutgoingMessage: MagicalOutgoingMessage) {
