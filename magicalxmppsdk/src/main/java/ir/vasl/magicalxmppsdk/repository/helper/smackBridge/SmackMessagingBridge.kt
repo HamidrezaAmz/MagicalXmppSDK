@@ -1,6 +1,7 @@
 package ir.vasl.magicalxmppsdk.repository.helper.smackBridge
 
 import android.util.Log
+import com.google.gson.Gson
 import ir.vasl.magicalxmppsdk.repository.PublicValue.Companion.TAG
 import ir.vasl.magicalxmppsdk.repository.`interface`.MessagingBridgeInterface
 import ir.vasl.magicalxmppsdk.repository.helper.IdGeneratorHelper
@@ -57,6 +58,9 @@ class SmackMessagingBridge private constructor(
         message: Message?,
         chat: Chat?
     ) {
+        Log.e(TAG, "newIncomingMessage: " + Gson().toJson(from) )
+        Log.e(TAG, "newIncomingMessage: " + Gson().toJson(message) )
+        Log.e(TAG, "newIncomingMessage: " + Gson().toJson(chat!!.xmppAddressOfChatPartner) )
         Log.i(TAG, "newIncomingMessage | Instance hashCode: ${hashCode()}")
         Log.i(TAG, "newIncomingMessage | message: $message")
         messagingBridgeInterface?.newIncomingMessage(
