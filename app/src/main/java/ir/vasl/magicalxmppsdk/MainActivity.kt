@@ -1,6 +1,7 @@
 package ir.vasl.magicalxmppsdk
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import ir.vasl.magicalxmppsdk.databinding.ActivityMainBinding
@@ -14,6 +15,7 @@ import ir.vasl.magicalxmppsdk.repository.model.MagicalOutgoingMessage
 
 class MainActivity : AppCompatActivity(), MagicalXmppSDKInterface, View.OnClickListener {
 
+    private val TAG = "MainActivity"
     private lateinit var binding: ActivityMainBinding
     private lateinit var magicalXmppSDKInstance: MagicalXmppSDK
 
@@ -22,24 +24,11 @@ class MainActivity : AppCompatActivity(), MagicalXmppSDKInterface, View.OnClickL
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.buttonSendNewMessage.setOnClickListener(this)
+        binding.buttonConnect.setOnClickListener(this)
+        binding.buttonDisconnect.setOnClickListener(this)
+        binding.buttonNewMessage.setOnClickListener(this)
 
-        magicalXmppSDKInstance = MagicalXmppSDK.Builder(this@MainActivity)
-            .setUsername(PublicValue.TEST_USERNAME)
-            .setPassword(PublicValue.TEST_PASSWORD)
-            .setDomain(PublicValue.TEST_DOMAIN)
-            .setHost(PublicValue.TEST_HOST)
-            .setPort(PublicValue.TEST_PORT)
-            .setCallback(this)
-            .build()
-    }
-
-    override fun onClick(v: View?) {
-        when (v?.id) {
-            R.id.button_send_new_message -> {
-                sendNewMessage()
-            }
-        }
+        initializeXMPPSDK()
     }
 
     override fun onNetworkStatusChanged(networkStatus: NetworkStatus) {
@@ -52,22 +41,35 @@ class MainActivity : AppCompatActivity(), MagicalXmppSDKInterface, View.OnClickL
 
     override fun onNewIncomingMessage(magicalIncomingMessage: MagicalIncomingMessage) {
         binding.textViewConnectionIncomingMessage.text =
-            "Incoming Message: ${magicalIncomingMessage.message}"
+            "Incoming: ${magicalIncomingMessage.message}"
     }
 
     override fun onNewOutgoingMessage(magicalOutgoingMessage: MagicalOutgoingMessage) {
         binding.textViewConnectionOutgoingMessage.text =
-            "Outgoing Message: ${magicalOutgoingMessage.message}"
+            "Outgoing: ${magicalOutgoingMessage.message}"
+    }
+
+    private fun initializeXMPPSDK() {
+        magicalXmppSDKInstance = MagicalXmppSDK.Builder(this@MainActivity)
+            .setUsername(PublicValue.TEST_USERNAME)
+            .setPassword(PublicValue.TEST_PASSWORD)
+            .setDomain(PublicValue.TEST_DOMAIN)
+            .setHost(PublicValue.TEST_HOST)
+            .setPort(PublicValue.TEST_PORT)
+            .setCallback(this)
+            .build()
     }
 
     private fun sendNewMessage() {
 
-        val messageCode = IdGeneratorHelper.getRandomId()
+        if (!::magicalXmppSDKInstance.isInitialized)
+            return
 
+        val messageCode = IdGeneratorHelper.getRandomId()
         magicalXmppSDKInstance.sendNewMessage(
             MagicalOutgoingMessage(
                 id = IdGeneratorHelper.getRandomId(),
-                message = "NEW MESSAGE: $messageCode",
+                message = "Message: $messageCode",
                 from = PublicValue.TEST_USERNAME,
                 to = PublicValue.TEST_TARGET_USERNAME
             )
@@ -76,7 +78,37 @@ class MainActivity : AppCompatActivity(), MagicalXmppSDKInterface, View.OnClickL
 
     override fun onDestroy() {
         super.onDestroy()
-        magicalXmppSDKInstance.disconnect()
+        if (::magicalXmppSDKInstance.isInitialized)
+            magicalXmppSDKInstance.disconnect()
     }
+
+    override fun onClick(view: View?) {
+        when (view?.id) {
+            R.id.button_connect -> {
+                initializeXMPPSDK()
+            }
+            R.id.button_disconnect -> {
+                if (::magicalXmppSDKInstance.isInitialized)
+                    magicalXmppSDKInstance.disconnect()
+                refreshView()
+            }
+            R.id.button_new_message -> {
+                if (::magicalXmppSDKInstance.isInitialized &&
+                    magicalXmppSDKInstance.getConnectionStatus() == ConnectionStatus.AUTHENTICATED
+                ) {
+                    sendNewMessage()
+                } else {
+                    Log.i(TAG, "onClick: ${magicalXmppSDKInstance.getConnectionStatus().name}.")
+                }
+            }
+        }
+    }
+
+    fun refreshView() {
+        binding.textViewConnectionStatus.text = "Disconnect"
+        binding.textViewConnectionIncomingMessage.text = "Incoming: --- "
+        binding.textViewConnectionOutgoingMessage.text = "Outgoing: ---"
+    }
+
 
 }

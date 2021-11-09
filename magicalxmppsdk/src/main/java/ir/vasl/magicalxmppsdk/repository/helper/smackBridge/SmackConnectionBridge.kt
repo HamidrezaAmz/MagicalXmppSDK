@@ -159,7 +159,7 @@ class SmackConnectionBridge private constructor(builder: Builder) : ConnectionLi
         else if (connection.isAuthenticated.not())
             ConnectionStatus.DISCONNECTED
         else if (connection.isConnected && connection.isAuthenticated)
-            ConnectionStatus.CONNECTED
+            ConnectionStatus.AUTHENTICATED
         else
             ConnectionStatus.UNKNOWN
     }

@@ -7,6 +7,34 @@
     android:padding="25dp"
     tools:context=".MainActivity">
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout_connection_holder"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/button_connect"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="CONNECT"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.5" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/button_disconnect"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="DISCONNECT"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.5" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <TextView
         android:id="@+id/textView_network_status"
         android:layout_width="wrap_content"
@@ -16,7 +44,7 @@
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/constraintLayout_connection_holder" />
 
     <TextView
         android:id="@+id/textView_connection_status"
@@ -52,10 +80,11 @@
         app:layout_constraintTop_toBottomOf="@id/textView_connection_incoming_message" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/button_send_new_message"
-        android:layout_width="wrap_content"
+        android:id="@+id/button_new_message"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="SEND NEW MESSAGE"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textView_connection_outgoing_message" />
 
