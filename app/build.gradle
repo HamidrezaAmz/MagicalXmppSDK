@@ -45,10 +45,10 @@ dependencies {
     implementation "androidx.recyclerview:recyclerview:1.2.1"
 
     // -- SDK
-    // implementation project(path: ':magicalxmppsdk')
+    implementation project(path: ':magicalxmppsdk')
 
     // -- SDK - JETPACK
-    implementation 'com.github.HamidrezaAmz:MagicalXmppSDK:1.0.2'
+    // implementation 'com.github.HamidrezaAmz:MagicalXmppSDK:1.0.3'
 
     // -- TEST
     testImplementation 'junit:junit:4.13.2'
