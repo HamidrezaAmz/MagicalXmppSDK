@@ -48,7 +48,7 @@ dependencies {
     implementation project(path: ':magicalxmppsdk')
 
     // -- SDK - JETPACK
-    // implementation 'com.github.HamidrezaAmz:MagicalXmppSDK:1.0.3'
+    // implementation 'com.github.HamidrezaAmz:MagicalXmppSDK:1.0.4'
 
     // -- TEST
     testImplementation 'junit:junit:4.13.2'

@@ -16,7 +16,7 @@ import ir.vasl.magicalxmppsdk.repository.model.MagicalOutgoingMessage
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 
-class MagicalXmppSDK private constructor(context: Context, builder: Builder) {
+class MagicalXmppSDKCore private constructor(context: Context, builder: Builder) {
 
     private var username: String = builder.username ?: PublicValue.DEFAULT_USERNAME
     private var password: String = builder.password ?: PublicValue.DEFAULT_PASSWORD
@@ -50,7 +50,7 @@ class MagicalXmppSDK private constructor(context: Context, builder: Builder) {
         fun setCallback(magicalXmppSDKInterface: MagicalXmppSDKInterface) =
             apply { this.magicalXmppSDKInterface = magicalXmppSDKInterface }
 
-        fun build() = MagicalXmppSDK(context, this)
+        fun build() = MagicalXmppSDKCore(context, this)
     }
 
     init {
