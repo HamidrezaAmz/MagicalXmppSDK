@@ -1,4 +1,5 @@
 # MagicalXmppSDK
+This is our new version of chatkit. [![](https://www.jitpack.io/v/HamidrezaAmz/MagicalXmppSDK.svg)](https://www.jitpack.io/#HamidrezaAmz/MagicalXmppSDK)
 This repo is a magical SDK that can connect to XMPP server with smack client with send &amp; receive functionality ;)
 
 # Usage
