@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import ir.vasl.magicalxmppsdk.databinding.ActivityMainBinding
 import ir.vasl.magicalxmppsdk.repository.PublicValue
-import ir.vasl.magicalxmppsdk.repository.`interface`.MagicalXmppSDKInterface
+import ir.vasl.magicalxmppsdk.repository.globalInterface.MagicalXmppSDKInterface
 import ir.vasl.magicalxmppsdk.repository.enum.ConnectionStatus
 import ir.vasl.magicalxmppsdk.repository.enum.NetworkStatus
 import ir.vasl.magicalxmppsdk.repository.helper.IdGeneratorHelper

@@ -3,7 +3,7 @@ package ir.vasl.magicalxmppsdk.repository.helper.smackBridge
 import android.util.Log
 import ir.vasl.magicalxmppsdk.repository.PublicValue
 import ir.vasl.magicalxmppsdk.repository.PublicValue.Companion.TAG
-import ir.vasl.magicalxmppsdk.repository.`interface`.ConnectionBridgeInterface
+import ir.vasl.magicalxmppsdk.repository.globalInterface.ConnectionBridgeInterface
 import ir.vasl.magicalxmppsdk.repository.enum.ConnectionStatus
 import kotlinx.coroutines.*
 import org.jivesoftware.smack.AbstractXMPPConnection

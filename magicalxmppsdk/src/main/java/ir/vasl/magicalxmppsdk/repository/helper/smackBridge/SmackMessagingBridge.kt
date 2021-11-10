@@ -2,7 +2,7 @@ package ir.vasl.magicalxmppsdk.repository.helper.smackBridge
 
 import android.util.Log
 import ir.vasl.magicalxmppsdk.repository.PublicValue.Companion.TAG
-import ir.vasl.magicalxmppsdk.repository.`interface`.MessagingBridgeInterface
+import ir.vasl.magicalxmppsdk.repository.globalInterface.MessagingBridgeInterface
 import ir.vasl.magicalxmppsdk.repository.helper.IdGeneratorHelper
 import ir.vasl.magicalxmppsdk.repository.model.MagicalIncomingMessage
 import ir.vasl.magicalxmppsdk.repository.model.MagicalOutgoingMessage

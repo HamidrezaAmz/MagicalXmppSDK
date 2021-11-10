@@ -4,9 +4,9 @@ import android.content.Context
 import android.util.Log
 import ir.vasl.magicalxmppsdk.repository.PublicValue
 import ir.vasl.magicalxmppsdk.repository.PublicValue.Companion.TAG
-import ir.vasl.magicalxmppsdk.repository.`interface`.ConnectionBridgeInterface
-import ir.vasl.magicalxmppsdk.repository.`interface`.MagicalXmppSDKInterface
-import ir.vasl.magicalxmppsdk.repository.`interface`.MessagingBridgeInterface
+import ir.vasl.magicalxmppsdk.repository.globalInterface.ConnectionBridgeInterface
+import ir.vasl.magicalxmppsdk.repository.globalInterface.MagicalXmppSDKInterface
+import ir.vasl.magicalxmppsdk.repository.globalInterface.MessagingBridgeInterface
 import ir.vasl.magicalxmppsdk.repository.enum.ConnectionStatus
 import ir.vasl.magicalxmppsdk.repository.helper.networkBridge.NetworkStatusTracker
 import ir.vasl.magicalxmppsdk.repository.helper.smackBridge.SmackConnectionBridge

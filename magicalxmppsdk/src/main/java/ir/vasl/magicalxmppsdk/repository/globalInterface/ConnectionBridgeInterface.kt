@@ -1,4 +1,4 @@
-package ir.vasl.magicalxmppsdk.repository.`interface`
+package ir.vasl.magicalxmppsdk.repository.globalInterface
 
 import ir.vasl.magicalxmppsdk.repository.enum.ConnectionStatus
 
