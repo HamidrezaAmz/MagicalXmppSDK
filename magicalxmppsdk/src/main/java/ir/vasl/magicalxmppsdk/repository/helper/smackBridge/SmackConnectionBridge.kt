@@ -3,8 +3,8 @@ package ir.vasl.magicalxmppsdk.repository.helper.smackBridge
 import android.util.Log
 import ir.vasl.magicalxmppsdk.repository.PublicValue
 import ir.vasl.magicalxmppsdk.repository.PublicValue.Companion.TAG
-import ir.vasl.magicalxmppsdk.repository.globalInterface.ConnectionBridgeInterface
 import ir.vasl.magicalxmppsdk.repository.enum.ConnectionStatus
+import ir.vasl.magicalxmppsdk.repository.globalInterface.ConnectionBridgeInterface
 import kotlinx.coroutines.*
 import org.jivesoftware.smack.AbstractXMPPConnection
 import org.jivesoftware.smack.ConnectionConfiguration
@@ -131,7 +131,10 @@ class SmackConnectionBridge private constructor(builder: Builder) : ConnectionLi
 
     private fun connect() {
         scope.launch(exceptionHandler) {
-            connection.connect().login()
+            if (connection.isConnected)
+                connection.login()
+            else
+                connection.connect().login()
         }
     }
 
