@@ -11,7 +11,7 @@ android {
         targetSdkVersion 30
         versionCode 23
         versionName "1.0.23"
-
+        multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -52,6 +52,9 @@ dependencies {
     implementation group: 'org.igniterealtime.smack', name: 'smack-android-extensions', version: '4.4.2'
     implementation group: 'org.igniterealtime.smack', name: 'smack-experimental', version: '4.4.2'
     implementation group: 'org.igniterealtime.smack', name: 'smack-tcp', version: '4.4.2'
+
+    // dex
+    implementation 'com.android.support.multidex:1.0.3'
 
     // -- TEST
     testImplementation 'junit:junit:4.13.2'

@@ -5,15 +5,12 @@ class PublicValue {
     companion object {
         const val TAG: String = "xx-"
 
-        // USER 1
-        // const val TEST_USERNAME: String = "6104e62869948e2cb943e8e9---23bda4fd-dacb-4c15-854f-6bd69fbddba4"
-        // const val TEST_PASSWORD: String = "87e54b33-61ac-41cd-a598-b29ab08881a0"
-        // const val TEST_TARGET_USERNAME: String = "60e3204784ee92490c9f059b---23bda4fd-dacb-4c15-854f-6bd69fbddba4"
-
-        // USER 2
-        const val TEST_USERNAME: String = "60e3204784ee92490c9f059b---23bda4fd-dacb-4c15-854f-6bd69fbddba4"
-        const val TEST_PASSWORD: String = "1fa84b10-0b25-4739-8aca-1e0f83c26608"
-        const val TEST_TARGET_USERNAME: String = "6104e62869948e2cb943e8e9---23bda4fd-dacb-4c15-854f-6bd69fbddba4"
+        // USER
+        const val TEST_USERNAME: String =
+            "611396af53da0b74bdb07b6f$$$48be1618-c9a0-48d4-a9ad-d82886287edb"
+        const val TEST_PASSWORD: String = "5c4da43d-b827-48ec-a588-22ed8db1fb11"
+        const val TEST_TARGET_USERNAME: String =
+            "611fa4e3483ce96b39ca8044$$$48be1618-c9a0-48d4-a9ad-d82886287edb"
 
         const val TEST_DOMAIN: String = "jitsi.tarhvareh.com"
         const val TEST_HOST: String = "jitsi.tarhvareh.com"
