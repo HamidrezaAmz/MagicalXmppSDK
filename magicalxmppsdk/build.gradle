@@ -9,8 +9,8 @@ android {
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 23
-        versionName "1.0.23"
+        versionCode 25
+        versionName "1.0.25"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -54,7 +54,7 @@ dependencies {
     implementation group: 'org.igniterealtime.smack', name: 'smack-tcp', version: '4.4.2'
 
     // dex
-    implementation 'com.android.support.multidex:1.0.3'
+    implementation 'com.android.support:multidex:1.0.3'
 
     // -- TEST
     testImplementation 'junit:junit:4.13.2'
@@ -69,7 +69,7 @@ afterEvaluate {
                 from components.release
                 groupId = 'com.github.hamidrezaamz'
                 artifactId = 'MagicalXmppSdk'
-                version = '1.0.23'
+                version = '1.0.25'
             }
         }
     }
