@@ -102,6 +102,8 @@ class SmackMessagingBridge private constructor(
 
     fun disconnect() {
         Log.i(TAG, "destroy | Instance hashCode: ${hashCode()}")
+        chatManager.removeIncomingListener(this)
+        chatManager.removeOutgoingListener(this)
     }
 
 }

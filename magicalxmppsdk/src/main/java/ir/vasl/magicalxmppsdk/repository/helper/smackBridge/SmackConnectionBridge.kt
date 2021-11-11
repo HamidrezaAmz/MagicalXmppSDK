@@ -51,8 +51,7 @@ class SmackConnectionBridge private constructor(builder: Builder) : ConnectionLi
         var connectionBridgeInterface: ConnectionBridgeInterface? = null
         fun setHost(host: String) = apply { this.host = host }
         fun setPort(port: Int) = apply { this.port = port }
-        fun setCallback(connectionBridgeInterface: ConnectionBridgeInterface) =
-            apply { this.connectionBridgeInterface = connectionBridgeInterface }
+        fun setCallback(connectionBridgeInterface: ConnectionBridgeInterface) = apply { this.connectionBridgeInterface = connectionBridgeInterface }
 
         fun build() = SmackConnectionBridge(this)
     }
@@ -169,9 +168,9 @@ class SmackConnectionBridge private constructor(builder: Builder) : ConnectionLi
 
     fun disconnect() {
         Log.i(TAG, "disconnect | Instance hashCode: ${hashCode()}")
-
         scope.launch {
             connection.disconnect()
+            connectionBridgeInterface?.onConnectionStatusChanged(ConnectionStatus.DISCONNECTED)
         }
     }
 

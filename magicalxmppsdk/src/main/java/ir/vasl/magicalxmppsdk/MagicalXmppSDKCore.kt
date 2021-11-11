@@ -4,10 +4,10 @@ import android.content.Context
 import android.util.Log
 import ir.vasl.magicalxmppsdk.repository.PublicValue
 import ir.vasl.magicalxmppsdk.repository.PublicValue.Companion.TAG
+import ir.vasl.magicalxmppsdk.repository.enum.ConnectionStatus
 import ir.vasl.magicalxmppsdk.repository.globalInterface.ConnectionBridgeInterface
 import ir.vasl.magicalxmppsdk.repository.globalInterface.MagicalXmppSDKInterface
 import ir.vasl.magicalxmppsdk.repository.globalInterface.MessagingBridgeInterface
-import ir.vasl.magicalxmppsdk.repository.enum.ConnectionStatus
 import ir.vasl.magicalxmppsdk.repository.helper.networkBridge.NetworkStatusTracker
 import ir.vasl.magicalxmppsdk.repository.helper.smackBridge.SmackConnectionBridge
 import ir.vasl.magicalxmppsdk.repository.helper.smackBridge.SmackMessagingBridge
@@ -47,8 +47,7 @@ class MagicalXmppSDKCore private constructor(context: Context, builder: Builder)
         fun setDomain(domain: String?) = apply { this.domain = domain }
         fun setHost(host: String?) = apply { this.host = host }
         fun setPort(port: Int?) = apply { this.port = port }
-        fun setCallback(magicalXmppSDKInterface: MagicalXmppSDKInterface) =
-            apply { this.magicalXmppSDKInterface = magicalXmppSDKInterface }
+        fun setCallback(magicalXmppSDKInterface: MagicalXmppSDKInterface) = apply { this.magicalXmppSDKInterface = magicalXmppSDKInterface }
 
         fun build() = MagicalXmppSDKCore(context, this)
     }
@@ -144,8 +143,10 @@ class MagicalXmppSDKCore private constructor(context: Context, builder: Builder)
     }
 
     fun disconnect() {
-        smackConnectionBridgeInstance.disconnect()
-        smackMessagingBridgeInstance.disconnect()
+        if (::smackConnectionBridgeInstance.isInitialized)
+            smackConnectionBridgeInstance.disconnect()
+        if (::smackMessagingBridgeInstance.isInitialized)
+            smackMessagingBridgeInstance.disconnect()
         jobParent.cancel()
         jobNetworkTracker.cancel()
         jobXmppConnection.cancel()
