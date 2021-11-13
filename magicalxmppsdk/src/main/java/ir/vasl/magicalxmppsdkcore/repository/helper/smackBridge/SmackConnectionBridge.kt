@@ -33,6 +33,9 @@ class SmackConnectionBridge private constructor(builder: Builder) : ConnectionLi
     private var DELAY_INTERVAL: Long = 2000
     private var INTERVAL_MAX: Int = 10000
 
+    private var connectionJob: Job? = null
+    private var reConnectionJob: Job? = null
+
     private val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
         Log.i(TAG, "CoroutineExceptionHandler | Instance hashCode: ${hashCode()}")
         Log.i(TAG, "CoroutineExceptionHandler: $throwable")
@@ -51,7 +54,8 @@ class SmackConnectionBridge private constructor(builder: Builder) : ConnectionLi
         var connectionBridgeInterface: ConnectionBridgeInterface? = null
         fun setHost(host: String) = apply { this.host = host }
         fun setPort(port: Int) = apply { this.port = port }
-        fun setCallback(connectionBridgeInterface: ConnectionBridgeInterface) = apply { this.connectionBridgeInterface = connectionBridgeInterface }
+        fun setCallback(connectionBridgeInterface: ConnectionBridgeInterface) =
+            apply { this.connectionBridgeInterface = connectionBridgeInterface }
 
         fun build() = SmackConnectionBridge(this)
     }
@@ -129,7 +133,7 @@ class SmackConnectionBridge private constructor(builder: Builder) : ConnectionLi
     }
 
     private fun connect() {
-        scope.launch(exceptionHandler) {
+        connectionJob = scope.launch(exceptionHandler) {
             if (connection.isConnected)
                 connection.login()
             else
@@ -142,7 +146,7 @@ class SmackConnectionBridge private constructor(builder: Builder) : ConnectionLi
         Log.i(TAG, "reConnect | Instance hashCode: ${hashCode()}")
         Log.i(TAG, "reConnect: after $DELAY_INTERVAL sec")
 
-        scope.launch {
+        reConnectionJob = scope.launch {
             delay(DELAY_INTERVAL)
             connect()
 
@@ -170,6 +174,8 @@ class SmackConnectionBridge private constructor(builder: Builder) : ConnectionLi
         Log.i(TAG, "disconnect | Instance hashCode: ${hashCode()}")
         scope.launch {
             connection.disconnect()
+            connectionJob?.cancel()
+            reConnectionJob?.cancel()
             connectionBridgeInterface?.onConnectionStatusChanged(ConnectionStatus.DISCONNECTED)
         }
     }

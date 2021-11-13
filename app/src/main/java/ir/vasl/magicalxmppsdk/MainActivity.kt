@@ -1,9 +1,10 @@
-package ir.vasl.magicalxmppsdkcore
+package ir.vasl.magicalxmppsdk
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import ir.vasl.magicalxmppsdkcore.databinding.ActivityMainBinding
-import ir.vasl.magicalxmppsdkcore.repository.PublicValue
+import ir.vasl.magicalxmppsdk.databinding.ActivityMainBinding
+import ir.vasl.magicalxmppsdk.repository.PublicValue
+import ir.vasl.magicalxmppsdkcore.MagicalXmppSDKCore
 import ir.vasl.magicalxmppsdkcore.repository.enum.ConnectionStatus
 import ir.vasl.magicalxmppsdkcore.repository.enum.NetworkStatus
 import ir.vasl.magicalxmppsdkcore.repository.globalInterface.MagicalXmppSDKInterface
