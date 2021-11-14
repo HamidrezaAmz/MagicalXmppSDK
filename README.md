@@ -20,3 +20,12 @@ magicalXmppSDKInstance = MagicalXmppSDK.Builder(this@MainActivity)
             .setCallback(this)
             .build()
 ```
+
+# Callback
+You can impelement SDK interfaces in this way
+```JAVA
+ fun onNetworkStatusChanged(networkStatus: NetworkStatus)
+ fun onConnectionStatusChanged(connectionStatus: ConnectionStatus)
+ fun onNewIncomingMessage(magicalIncomingMessage: MagicalIncomingMessage)
+ fun onNewOutgoingMessage(magicalOutgoingMessage: MagicalOutgoingMessage)
+```
