@@ -1,4 +1,4 @@
-package ir.vasl.magicalxmppsdkcore.repository.helper.smackBridge
+package ir.vasl.magicalxmppsdkcore.repository.helper.connectionBridge
 
 import android.util.Log
 import ir.vasl.magicalxmppsdkcore.repository.PublicValue
@@ -6,10 +6,7 @@ import ir.vasl.magicalxmppsdkcore.repository.PublicValue.Companion.TAG
 import ir.vasl.magicalxmppsdkcore.repository.enum.ConnectionStatus
 import ir.vasl.magicalxmppsdkcore.repository.globalInterface.ConnectionBridgeInterface
 import kotlinx.coroutines.*
-import org.jivesoftware.smack.AbstractXMPPConnection
-import org.jivesoftware.smack.ConnectionConfiguration
-import org.jivesoftware.smack.ConnectionListener
-import org.jivesoftware.smack.XMPPConnection
+import org.jivesoftware.smack.*
 import org.jivesoftware.smack.tcp.XMPPTCPConnection
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration
 import org.jivesoftware.smack.util.TLSUtils
@@ -40,8 +37,22 @@ class SmackConnectionBridge private constructor(builder: Builder) : ConnectionLi
         Log.i(TAG, "CoroutineExceptionHandler | Instance hashCode: ${hashCode()}")
         Log.i(TAG, "CoroutineExceptionHandler: $throwable")
 
-        connectionBridgeInterface?.onConnectionStatusChanged(ConnectionStatus.FAILED)
-        reConnect()
+        if (throwable is SmackException.AlreadyConnectedException) {
+            Log.i(TAG, "SmackException: zer mizane!")
+        }
+
+        when (throwable) {
+            is SmackException.AlreadyConnectedException -> {
+                connectionBridgeInterface?.onConnectionStatusChanged(ConnectionStatus.CONNECTED)
+            }
+            is SmackException.AlreadyLoggedInException -> {
+                connectionBridgeInterface?.onConnectionStatusChanged(ConnectionStatus.AUTHENTICATED)
+            }
+            else -> {
+                connectionBridgeInterface?.onConnectionStatusChanged(ConnectionStatus.FAILED)
+                reConnect()
+            }
+        }
     }
 
     data class Builder(
@@ -52,10 +63,18 @@ class SmackConnectionBridge private constructor(builder: Builder) : ConnectionLi
         var host: String? = null
         var port: Int? = null
         var connectionBridgeInterface: ConnectionBridgeInterface? = null
-        fun setHost(host: String) = apply { this.host = host }
-        fun setPort(port: Int) = apply { this.port = port }
-        fun setCallback(connectionBridgeInterface: ConnectionBridgeInterface) =
-            apply { this.connectionBridgeInterface = connectionBridgeInterface }
+
+        fun setHost(host: String) = apply {
+            this.host = host
+        }
+
+        fun setPort(port: Int) = apply {
+            this.port = port
+        }
+
+        fun setCallback(connectionBridgeInterface: ConnectionBridgeInterface) = apply {
+            this.connectionBridgeInterface = connectionBridgeInterface
+        }
 
         fun build() = SmackConnectionBridge(this)
     }

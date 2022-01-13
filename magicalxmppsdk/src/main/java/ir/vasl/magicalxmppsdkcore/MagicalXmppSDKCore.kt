@@ -8,9 +8,9 @@ import ir.vasl.magicalxmppsdkcore.repository.enum.ConnectionStatus
 import ir.vasl.magicalxmppsdkcore.repository.globalInterface.ConnectionBridgeInterface
 import ir.vasl.magicalxmppsdkcore.repository.globalInterface.MagicalXmppSDKInterface
 import ir.vasl.magicalxmppsdkcore.repository.globalInterface.MessagingBridgeInterface
+import ir.vasl.magicalxmppsdkcore.repository.helper.connectionBridge.SmackConnectionBridge
+import ir.vasl.magicalxmppsdkcore.repository.helper.messagingBridge.SmackMessagingBridge
 import ir.vasl.magicalxmppsdkcore.repository.helper.networkBridge.NetworkStatusTracker
-import ir.vasl.magicalxmppsdkcore.repository.helper.smackBridge.SmackConnectionBridge
-import ir.vasl.magicalxmppsdkcore.repository.helper.smackBridge.SmackMessagingBridge
 import ir.vasl.magicalxmppsdkcore.repository.model.MagicalIncomingMessage
 import ir.vasl.magicalxmppsdkcore.repository.model.MagicalOutgoingMessage
 import kotlinx.coroutines.*
@@ -48,7 +48,8 @@ class MagicalXmppSDKCore private constructor(context: Context, builder: Builder)
         fun setDomain(domain: String?) = apply { this.domain = domain }
         fun setHost(host: String?) = apply { this.host = host }
         fun setPort(port: Int?) = apply { this.port = port }
-        fun setCallback(magicalXmppSDKInterface: MagicalXmppSDKInterface) = apply { this.magicalXmppSDKInterface = magicalXmppSDKInterface }
+        fun setCallback(magicalXmppSDKInterface: MagicalXmppSDKInterface) =
+            apply { this.magicalXmppSDKInterface = magicalXmppSDKInterface }
 
         fun build() = MagicalXmppSDKCore(context, this)
     }
@@ -123,6 +124,14 @@ class MagicalXmppSDKCore private constructor(context: Context, builder: Builder)
                         }
                     }
 
+                    override fun newIncomingMessageHistory(magicalIncomingMessageHistoryList: List<MagicalIncomingMessage>) {
+                        scope.launch {
+                            withContext(Dispatchers.Main) {
+                                magicalXmppSDKInterface?.onNewIncomingMessageHistory(magicalIncomingMessageHistoryList)
+                            }
+                        }
+                    }
+
                     override fun newOutgoingMessage(magicalOutgoingMessage: MagicalOutgoingMessage) {
                         scope.launch {
                             withContext(Dispatchers.Main) {
@@ -136,7 +145,13 @@ class MagicalXmppSDKCore private constructor(context: Context, builder: Builder)
     }
 
     fun sendNewMessage(magicalOutgoingMessage: MagicalOutgoingMessage) {
-        smackMessagingBridgeInstance.sendNewMessage(magicalOutgoingMessage)
+        if (::smackMessagingBridgeInstance.isInitialized)
+            smackMessagingBridgeInstance.sendNewMessage(magicalOutgoingMessage)
+    }
+
+    fun getChatHistory(target: String) {
+        if (::smackMessagingBridgeInstance.isInitialized)
+            smackMessagingBridgeInstance.getChatHistory(target)
     }
 
     fun getConnectionStatus(): ConnectionStatus {
@@ -146,8 +161,10 @@ class MagicalXmppSDKCore private constructor(context: Context, builder: Builder)
     fun disconnect() {
         if (::smackConnectionBridgeInstance.isInitialized)
             smackConnectionBridgeInstance.disconnect()
+
         if (::smackMessagingBridgeInstance.isInitialized)
             smackMessagingBridgeInstance.disconnect()
+
         jobParent.cancel()
         jobNetworkTracker.cancel()
         jobXmppConnection.cancel()

@@ -1,6 +1,7 @@
 package ir.vasl.magicalxmppsdk
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import ir.vasl.magicalxmppsdk.databinding.ActivityMainBinding
 import ir.vasl.magicalxmppsdk.repository.PublicValue
@@ -39,6 +40,9 @@ class MainActivity : AppCompatActivity(), MagicalXmppSDKInterface {
                 sendNewMessage()
             }
         }
+        binding.buttonChatHistory.setOnClickListener {
+            getMessageHistory()
+        }
 
         initializeXMPPSDK()
     }
@@ -49,11 +53,19 @@ class MainActivity : AppCompatActivity(), MagicalXmppSDKInterface {
 
     override fun onConnectionStatusChanged(connectionStatus: ConnectionStatus) {
         binding.textViewConnectionStatus.text = "Connection Status: ${connectionStatus.value}"
+
+        if (connectionStatus == ConnectionStatus.AUTHENTICATED) {
+            magicalXmppSDKInstance.getChatHistory(PublicValue.TEST_TARGET_USERNAME)
+        }
     }
 
     override fun onNewIncomingMessage(magicalIncomingMessage: MagicalIncomingMessage) {
         binding.textViewConnectionIncomingMessage.text =
             "Incoming: ${magicalIncomingMessage.message}"
+    }
+
+    override fun onNewIncomingMessageHistory(magicalIncomingMessageHistoryList: List<MagicalIncomingMessage>) {
+        Log.i(TAG, "onNewIncomingMessageHistory: size -> ${magicalIncomingMessageHistoryList.size}")
     }
 
     override fun onNewOutgoingMessage(magicalOutgoingMessage: MagicalOutgoingMessage) {
@@ -86,6 +98,14 @@ class MainActivity : AppCompatActivity(), MagicalXmppSDKInterface {
                 to = PublicValue.TEST_TARGET_USERNAME
             )
         )
+    }
+
+    private fun getMessageHistory() {
+
+        if (!::magicalXmppSDKInstance.isInitialized)
+            return
+
+        magicalXmppSDKInstance.getChatHistory(PublicValue.TEST_TARGET_USERNAME)
     }
 
     override fun onDestroy() {

@@ -3,6 +3,7 @@ package ir.vasl.magicalxmppsdk.repository
 class PublicValue {
 
     companion object {
+
         const val TAG: String = "xx-"
 
         // USER
@@ -15,3 +16,4 @@ class PublicValue {
         const val TEST_PORT: Int = 5222
     }
 }
+
