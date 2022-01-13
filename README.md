@@ -27,5 +27,6 @@ You can impelement SDK interfaces in this way
  fun onNetworkStatusChanged(networkStatus: NetworkStatus)
  fun onConnectionStatusChanged(connectionStatus: ConnectionStatus)
  fun onNewIncomingMessage(magicalIncomingMessage: MagicalIncomingMessage)
+ fun onNewIncomingMessageHistory(magicalIncomingMessageHistoryList: List<MagicalIncomingMessage>)
  fun onNewOutgoingMessage(magicalOutgoingMessage: MagicalOutgoingMessage)
 ```
