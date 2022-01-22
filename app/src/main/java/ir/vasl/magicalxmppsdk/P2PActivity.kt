@@ -55,10 +55,8 @@ class P2PActivity : AppCompatActivity(), MagicalXmppSDKInterface {
 
     override fun onConnectionStatusChanged(connectionStatus: ConnectionStatus) {
         binding.textViewConnectionStatus.text = "Connection Status: ${connectionStatus.value}"
-
-        if (connectionStatus == ConnectionStatus.AUTHENTICATED) {
+        if (connectionStatus == ConnectionStatus.AUTHENTICATED)
             magicalXmppSDKInstance.getMessageHistory(PublicValue.TEST_TARGET_USERNAME)
-        }
     }
 
     override fun onNewIncomingMessage(magicalIncomingMessage: MagicalIncomingMessage) {

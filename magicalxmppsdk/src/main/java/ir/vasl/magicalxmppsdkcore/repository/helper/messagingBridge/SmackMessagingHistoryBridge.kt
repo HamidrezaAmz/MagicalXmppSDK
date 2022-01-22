@@ -50,9 +50,10 @@ class SmackMessagingHistoryBridge private constructor(
     }
 
     private fun getMessageHistoryLastPage(target: String) {
-        Log.i(TAG, "getMessageHistoryLastPage: currTarget: $currTarget")
         try {
             currTarget = target
+            Log.i(TAG, "getMessageHistoryLastPage: currTarget: $currTarget")
+
             mamQueryArgs = MamManager.MamQueryArgs.builder()
                 .limitResultsToJid(getJid(target))
                 .queryLastPage()

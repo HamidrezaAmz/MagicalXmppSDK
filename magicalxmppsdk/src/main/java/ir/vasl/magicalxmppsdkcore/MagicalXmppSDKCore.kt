@@ -108,6 +108,11 @@ class MagicalXmppSDKCore private constructor(context: Context, builder: Builder)
                     .setPort(port)
                     .setCallback(object : ConnectionBridgeInterface {
                         override fun onConnectionStatusChanged(connectionStatus: ConnectionStatus) {
+                            if (connectionStatus == ConnectionStatus.AUTHENTICATED) {
+                                runMessagingBridge(connectionStatus)
+                                runMessagingHistoryBridge(connectionStatus)
+                            }
+
                             scope.launch {
                                 withContext(Dispatchers.Main) {
                                     magicalXmppSDKInterface?.onConnectionStatusChanged(
@@ -115,8 +120,6 @@ class MagicalXmppSDKCore private constructor(context: Context, builder: Builder)
                                     )
                                 }
                             }
-                            runMessagingBridge(connectionStatus)
-                            runMessagingHistoryBridge(connectionStatus)
                         }
                     })
                     .build()
@@ -189,11 +192,15 @@ class MagicalXmppSDKCore private constructor(context: Context, builder: Builder)
     fun sendNewMessage(magicalOutgoingMessage: MagicalOutgoingMessage) {
         if (::smackMessagingBridgeInstance.isInitialized)
             smackMessagingBridgeInstance.sendNewMessage(magicalOutgoingMessage)
+        else
+            Log.i(TAG, "sendNewMessage: smackMessagingBridgeInstance.isInitialized: false")
     }
 
     fun getMessageHistory(target: String) {
         if (::smackMessagingHistoryBridgeInstance.isInitialized)
             smackMessagingHistoryBridgeInstance.getMessageHistory(target)
+        else
+            Log.i(TAG, "getMessageHistory: smackMessagingHistoryBridgeInstance.isInitialized: false")
     }
 
     fun getConnectionStatus(): ConnectionStatus {

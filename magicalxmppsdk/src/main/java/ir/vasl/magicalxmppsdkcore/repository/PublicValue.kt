@@ -12,7 +12,7 @@ class PublicValue {
         const val DEFAULT_HOST: String = "jitsi.tarhvareh.com"
 
         const val DEFAULT_PAGE_INDEX: Int = 1
-        const val DEFAULT_MESSAGE_COUNT: Int = 40
+        const val DEFAULT_MESSAGE_COUNT: Int = 100
         const val DEFAULT_PORT: Int = 5222
         const val DEFAULT_ROOM: String = "SAMPLE ROOM"
     }
