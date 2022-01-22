@@ -2,17 +2,13 @@ package ir.vasl.magicalxmppsdkcore.repository.helper.messagingBridge
 
 import android.util.Log
 import ir.vasl.magicalxmppsdkcore.repository.PublicValue
-import ir.vasl.magicalxmppsdkcore.repository.PublicValue.Companion.DEFAULT_MESSAGE_COUNT
 import ir.vasl.magicalxmppsdkcore.repository.PublicValue.Companion.TAG
 import ir.vasl.magicalxmppsdkcore.repository.globalInterface.MessagingHistoryInterface
 import ir.vasl.magicalxmppsdkcore.repository.helper.IdGeneratorHelper
 import ir.vasl.magicalxmppsdkcore.repository.model.MagicalIncomingMessage
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import org.jivesoftware.smack.AbstractXMPPConnection
 import org.jivesoftware.smackx.mam.MamManager
-import org.jivesoftware.smackx.mam.MamManager.MamQueryArgs
+import org.jxmpp.jid.Jid
 import org.jxmpp.jid.impl.JidCreate
 
 class SmackMessagingHistoryBridge private constructor(
@@ -20,17 +16,22 @@ class SmackMessagingHistoryBridge private constructor(
     builder: Builder
 ) {
 
-    private var target = builder.target
+    private var domain = builder.domain
     private var messageCount = builder.messageCount
     private var messagingHistoryInterface: MessagingHistoryInterface? = builder.messagingHistoryInterface
+    private var mamManager: MamManager = MamManager.getInstanceFor(connection)
+    private var currTarget: String = ""
+
+    private lateinit var mamQueryArgs: MamManager.MamQueryArgs
+    private lateinit var mamQuery: MamManager.MamQuery
 
     data class Builder(val connection: AbstractXMPPConnection) {
-        var target: String? = null
-        var messageCount: Int = DEFAULT_MESSAGE_COUNT
+        var domain: String? = PublicValue.DEFAULT_DOMAIN
+        var messageCount: Int = PublicValue.DEFAULT_MESSAGE_COUNT
         var messagingHistoryInterface: MessagingHistoryInterface? = null
 
-        fun setTarget(target: String) = apply {
-            this.target = target
+        fun setDomain(domain: String) = apply {
+            this.domain = domain
         }
 
         fun setMessageCount(messageCount: Int) = apply {
@@ -44,33 +45,38 @@ class SmackMessagingHistoryBridge private constructor(
         fun build() = SmackMessagingHistoryBridge(connection, this)
     }
 
-    init {
-        getChatHistory()
+    private fun getJid(target: String): Jid? {
+        return JidCreate.from("$target@$domain")
     }
 
-    private fun getChatHistory() {
+    private fun getMessageHistoryLastPage(target: String) {
+        Log.i(TAG, "getMessageHistoryLastPage: currTarget: $currTarget")
+        try {
+            currTarget = target
+            mamQueryArgs = MamManager.MamQueryArgs.builder()
+                .limitResultsToJid(getJid(target))
+                .queryLastPage()
+                .setResultPageSize(messageCount)
+                .build()
+            mamQuery = mamManager.queryArchive(mamQueryArgs)
+            val messageHistoryList: List<MagicalIncomingMessage> = mamQuery.messages.map {
+                MagicalIncomingMessage(
+                    id = IdGeneratorHelper.getRandomId(),
+                    message = it?.body ?: "No Message Found!",
+                    from = it.from.toString()
+                )
+            }
+            messagingHistoryInterface?.newIncomingMessageHistory(messageHistoryList)
+        } catch (e: Exception) {
+            messagingHistoryInterface?.newIncomingMessageHistoryError(e.message.toString())
+        }
+    }
 
-        Log.i(TAG, "getChatHistory: start getting history")
-
-        val jid = JidCreate.from(target + "@" + PublicValue.DEFAULT_DOMAIN)
-
-        CoroutineScope(Dispatchers.IO).launch {
-
-            val mamManager = MamManager.getInstanceFor(connection)
-
-            mamManager.enableMamForAllMessages()
-
-            Log.i(TAG, "getChatHistory: mamManager support -> : ${mamManager.isSupported}")
-
-            try {
-
-                val mamQueryArgs = MamQueryArgs.builder()
-                    .limitResultsToJid(jid)
-                    .setResultPageSize(messageCount)
-                    .build()
-
-                val mamQuery = mamManager.queryArchive(mamQueryArgs)
-                Log.i(TAG, "getChatHistory: mamQuery -> ${mamQuery.messageCount}")
+    private fun getChatHistoryNextPage() {
+        Log.i(TAG, "getMessageHistoryLastPage: currTarget: $currTarget")
+        try {
+            if (mamQuery.isComplete.not()) {
+                mamQuery.pageNext(messageCount)
                 val messageHistoryList: List<MagicalIncomingMessage> = mamQuery.messages.map {
                     MagicalIncomingMessage(
                         id = IdGeneratorHelper.getRandomId(),
@@ -78,16 +84,27 @@ class SmackMessagingHistoryBridge private constructor(
                         from = it.from.toString()
                     )
                 }
-
-                // val archivePref = mamManager.retrieveArchivingPreferences()
-                // Log.i(TAG, "getChatHistory: archivePref -> ${archivePref.toString()}")
-
                 messagingHistoryInterface?.newIncomingMessageHistory(messageHistoryList)
-
-            } catch (e: Exception) {
-                Log.e(TAG, "getChatHistory: $e")
+            } else {
+                Log.i(TAG, "getChatHistoryNextPage: All messages has been returned!")
             }
+        } catch (e: Exception) {
+            messagingHistoryInterface?.newIncomingMessageHistoryError(e.message.toString())
         }
+    }
+
+    fun getMessageHistory(target: String) {
+        if (::mamQueryArgs.isInitialized.not())
+            getMessageHistoryLastPage(target)
+        else if (currTarget != target)
+            getMessageHistoryLastPage(target) // new chat!
+        else
+            getChatHistoryNextPage()
+    }
+
+    fun disconnect() {
+        currTarget = ""
+        messagingHistoryInterface = null
     }
 
 }

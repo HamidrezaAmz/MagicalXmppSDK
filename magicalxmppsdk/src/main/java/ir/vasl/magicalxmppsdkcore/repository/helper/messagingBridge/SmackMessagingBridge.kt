@@ -3,7 +3,6 @@ package ir.vasl.magicalxmppsdkcore.repository.helper.messagingBridge
 import android.util.Log
 import ir.vasl.magicalxmppsdkcore.repository.PublicValue.Companion.TAG
 import ir.vasl.magicalxmppsdkcore.repository.globalInterface.MessagingBridgeInterface
-import ir.vasl.magicalxmppsdkcore.repository.globalInterface.MessagingHistoryInterface
 import ir.vasl.magicalxmppsdkcore.repository.helper.IdGeneratorHelper
 import ir.vasl.magicalxmppsdkcore.repository.model.MagicalIncomingMessage
 import ir.vasl.magicalxmppsdkcore.repository.model.MagicalOutgoingMessage
@@ -20,7 +19,7 @@ import org.jxmpp.jid.impl.JidCreate
 class SmackMessagingBridge private constructor(
     connection: AbstractXMPPConnection,
     builder: Builder
-) : IncomingChatMessageListener, OutgoingChatMessageListener, MessagingHistoryInterface {
+) : IncomingChatMessageListener, OutgoingChatMessageListener {
 
     private lateinit var chatManager: ChatManager
 
@@ -89,13 +88,6 @@ class SmackMessagingBridge private constructor(
         )
     }
 
-    override fun newIncomingMessageHistory(
-        messageHistoryList: List<MagicalIncomingMessage>
-    ) {
-        Log.i(TAG, "onMessageHistoryResult: messageHistoryCount: ${messageHistoryList.size}")
-        messagingBridgeInterface?.newIncomingMessageHistory(messageHistoryList)
-    }
-
     private fun generateMessage(message: String?, stanzaId: String?): Message {
         val newMessage = Message()
         newMessage.stanzaId = stanzaId
@@ -110,13 +102,6 @@ class SmackMessagingBridge private constructor(
         val jid = JidCreate.from(targetJid)
         val chat: Chat = chatManager.chatWith(jid.asEntityBareJidIfPossible())
         chat.send(message)
-    }
-
-    fun getChatHistory(target: String) {
-        SmackMessagingHistoryBridge.Builder(connection)
-            .setTarget(target)
-            .setCallback(this)
-            .build()
     }
 
     fun disconnect() {

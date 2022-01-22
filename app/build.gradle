@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 30
@@ -30,6 +31,14 @@ android {
     }
     buildFeatures {
         viewBinding = true
+    }
+    dataBinding{
+        enabled = true
+    }
+    lintOptions {
+        checkReleaseBuilds false
+        //If you want to continue even if errors found use following line
+        abortOnError false
     }
     testOptions {
         unitTests {

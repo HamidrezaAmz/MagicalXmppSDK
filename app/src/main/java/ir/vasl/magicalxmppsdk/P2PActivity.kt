@@ -3,7 +3,7 @@ package ir.vasl.magicalxmppsdk
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import ir.vasl.magicalxmppsdk.databinding.ActivityMainBinding
+import ir.vasl.magicalxmppsdk.databinding.ActivityP2pBinding
 import ir.vasl.magicalxmppsdk.repository.PublicValue
 import ir.vasl.magicalxmppsdkcore.MagicalXmppSDKCore
 import ir.vasl.magicalxmppsdkcore.repository.enum.ConnectionStatus
@@ -13,16 +13,18 @@ import ir.vasl.magicalxmppsdkcore.repository.helper.IdGeneratorHelper
 import ir.vasl.magicalxmppsdkcore.repository.model.MagicalIncomingMessage
 import ir.vasl.magicalxmppsdkcore.repository.model.MagicalOutgoingMessage
 
-class MainActivity : AppCompatActivity(), MagicalXmppSDKInterface {
+class P2PActivity : AppCompatActivity(), MagicalXmppSDKInterface {
 
     private val TAG = "MainActivity"
-    private lateinit var binding: ActivityMainBinding
+
+    private lateinit var binding: ActivityP2pBinding
     private lateinit var magicalXmppSDKInstance: MagicalXmppSDKCore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
+        binding = ActivityP2pBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        title = "P2PActivity"
 
         binding.buttonConnect.setOnClickListener {
             initializeXMPPSDK()
@@ -55,26 +57,27 @@ class MainActivity : AppCompatActivity(), MagicalXmppSDKInterface {
         binding.textViewConnectionStatus.text = "Connection Status: ${connectionStatus.value}"
 
         if (connectionStatus == ConnectionStatus.AUTHENTICATED) {
-            magicalXmppSDKInstance.getChatHistory(PublicValue.TEST_TARGET_USERNAME)
+            magicalXmppSDKInstance.getMessageHistory(PublicValue.TEST_TARGET_USERNAME)
         }
     }
 
     override fun onNewIncomingMessage(magicalIncomingMessage: MagicalIncomingMessage) {
-        binding.textViewConnectionIncomingMessage.text =
-            "Incoming: ${magicalIncomingMessage.message}"
+        addItemIntoBoard("Incoming: $magicalIncomingMessage")
     }
 
     override fun onNewIncomingMessageHistory(magicalIncomingMessageHistoryList: List<MagicalIncomingMessage>) {
         Log.i(TAG, "onNewIncomingMessageHistory: size -> ${magicalIncomingMessageHistoryList.size}")
+        Log.i(TAG, "onNewIncomingMessageHistory: list -> ${magicalIncomingMessageHistoryList.toString()}")
+
+        addItemIntoBoard("IncomingMessageHistory: ${magicalIncomingMessageHistoryList.size}")
     }
 
     override fun onNewOutgoingMessage(magicalOutgoingMessage: MagicalOutgoingMessage) {
-        binding.textViewConnectionOutgoingMessage.text =
-            "Outgoing: ${magicalOutgoingMessage.message}"
+        addItemIntoBoard("Outgoing: $magicalOutgoingMessage")
     }
 
     private fun initializeXMPPSDK() {
-        magicalXmppSDKInstance = MagicalXmppSDKCore.Builder(this@MainActivity)
+        magicalXmppSDKInstance = MagicalXmppSDKCore.Builder(this@P2PActivity)
             .setUsername(PublicValue.TEST_USERNAME)
             .setPassword(PublicValue.TEST_PASSWORD)
             .setDomain(PublicValue.TEST_DOMAIN)
@@ -102,10 +105,10 @@ class MainActivity : AppCompatActivity(), MagicalXmppSDKInterface {
 
     private fun getMessageHistory() {
 
-        if (!::magicalXmppSDKInstance.isInitialized)
+        if (::magicalXmppSDKInstance.isInitialized.not())
             return
 
-        magicalXmppSDKInstance.getChatHistory(PublicValue.TEST_TARGET_USERNAME)
+        magicalXmppSDKInstance.getMessageHistory(PublicValue.TEST_TARGET_USERNAME)
     }
 
     override fun onDestroy() {
@@ -115,10 +118,14 @@ class MainActivity : AppCompatActivity(), MagicalXmppSDKInterface {
     }
 
     private fun refreshView() {
-        binding.textViewConnectionStatus.text = "Disconnect"
-        binding.textViewConnectionIncomingMessage.text = "Incoming: --- "
-        binding.textViewConnectionOutgoingMessage.text = "Outgoing: ---"
+        binding.textViewConnectionStatus.text = "Connection Status: Disconnect"
+        binding.appCompatTextViewBoard.text = ""
     }
 
+    private fun addItemIntoBoard(newMessage: String) {
+        var boardData = binding.appCompatTextViewBoard.text.toString()
+        boardData = '\n' + newMessage + '\n' + boardData
+        binding.appCompatTextViewBoard.text = boardData
+    }
 
 }

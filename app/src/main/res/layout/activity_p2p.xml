@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="25dp"
+        tools:context=".P2PActivity">
+
+        <TextView
+            android:id="@+id/textView_network_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="Network Status: ---"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textView_connection_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="Connection Status: ---"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textView_network_status" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/button_connect"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="CONNECT"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textView_connection_status" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/button_disconnect"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="DISCONNECT"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/button_connect" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/button_new_message"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="SEND NEW MESSAGE"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/button_disconnect" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/button_chat_history"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="GET CHAT HISTORY"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/button_new_message" />
+
+        <ScrollView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:fillViewport="true"
+            android:padding="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/button_chat_history">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/appCompatTextView_board"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@color/black"
+                android:padding="8dp"
+                android:scrollbars="vertical"
+                android:textColor="@color/white"
+                android:textSize="8sp" />
+
+        </ScrollView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

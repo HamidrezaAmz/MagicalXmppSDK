@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="8dp"
+        tools:context=".MenuActivity">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/appCompatButton_p2p"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:minWidth="250dp"
+            android:padding="20dp"
+            android:text="P2P User Chat"
+            android:textSize="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_percent="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/appCompatButton_multi"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:minWidth="250dp"
+            android:padding="20dp"
+            android:text="Multi User Chat"
+            android:textSize="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_percent="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/appCompatButton_p2p" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

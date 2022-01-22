@@ -9,15 +9,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MagicalXmppSDK">
-
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MucActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MenuActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+        <activity android:name=".P2PActivity" />
     </application>
 
 </manifest>
