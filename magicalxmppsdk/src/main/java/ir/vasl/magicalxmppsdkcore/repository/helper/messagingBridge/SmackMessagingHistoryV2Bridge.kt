@@ -11,7 +11,7 @@ import org.jivesoftware.smackx.mam.MamManager
 import org.jxmpp.jid.Jid
 import org.jxmpp.jid.impl.JidCreate
 
-class SmackMessagingHistoryBridge private constructor(
+class SmackMessagingHistoryV2Bridge private constructor(
     private var connection: AbstractXMPPConnection,
     builder: Builder
 ) {
@@ -42,7 +42,7 @@ class SmackMessagingHistoryBridge private constructor(
             this.messagingHistoryInterface = messagingHistoryInterface
         }
 
-        fun build() = SmackMessagingHistoryBridge(connection, this)
+        fun build() = SmackMessagingHistoryV2Bridge(connection, this)
     }
 
     private fun getJid(target: String): Jid? {
@@ -53,6 +53,8 @@ class SmackMessagingHistoryBridge private constructor(
         try {
             currTarget = target
             Log.i(TAG, "getMessageHistoryLastPage: currTarget: $currTarget")
+
+            val lastJitsiMessageId = mamManager.messageUidOfLatestMessage
 
             mamQueryArgs = MamManager.MamQueryArgs.builder()
                 .limitResultsToJid(getJid(target))
@@ -74,11 +76,28 @@ class SmackMessagingHistoryBridge private constructor(
     }
 
     private fun getChatHistoryNextPage() {
-        Log.i(TAG, "getMessageHistoryLastPage: currTarget: $currTarget")
+        Log.i(TAG, "getChatHistoryNextPage: currTarget: $currTarget")
+        try {
+            mamQuery.pageNext(messageCount)
+            val messageHistoryList: List<MagicalIncomingMessage> = mamQuery.messages.map {
+                MagicalIncomingMessage(
+                    id = IdGeneratorHelper.getRandomId(),
+                    message = it?.body ?: "No Message Found!",
+                    from = it.from.toString()
+                )
+            }
+            messagingHistoryInterface?.newIncomingMessageHistory(messageHistoryList)
+        } catch (e: Exception) {
+            messagingHistoryInterface?.newIncomingMessageHistoryError(e.message.toString())
+        }
+    }
+
+    private fun getChatHistoryPreviousPage() {
+        Log.i(TAG, "getChatHistoryPreviousPage: currTarget: $currTarget")
         try {
             if (mamQuery.isComplete.not()) {
-                mamQuery.pageNext(messageCount)
 
+                mamQuery.pagePrevious(messageCount)
                 val messageHistoryList: List<MagicalIncomingMessage> = mamQuery.messages.map {
                     MagicalIncomingMessage(
                         id = IdGeneratorHelper.getRandomId(),
@@ -90,6 +109,7 @@ class SmackMessagingHistoryBridge private constructor(
             } else {
                 Log.i(TAG, "getChatHistoryNextPage: All messages has been returned!")
             }
+
         } catch (e: Exception) {
             messagingHistoryInterface?.newIncomingMessageHistoryError(e.message.toString())
         }
@@ -101,7 +121,7 @@ class SmackMessagingHistoryBridge private constructor(
         else if (currTarget != target)
             getMessageHistoryLastPage(target) // new chat!
         else
-            getChatHistoryNextPage()
+            getChatHistoryPreviousPage()
     }
 
     fun disconnect() {

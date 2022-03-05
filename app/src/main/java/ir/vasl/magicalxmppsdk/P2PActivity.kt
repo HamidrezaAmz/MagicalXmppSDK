@@ -65,7 +65,9 @@ class P2PActivity : AppCompatActivity(), MagicalXmppSDKInterface {
 
     override fun onNewIncomingMessageHistory(magicalIncomingMessageHistoryList: List<MagicalIncomingMessage>) {
         Log.i(TAG, "onNewIncomingMessageHistory: size -> ${magicalIncomingMessageHistoryList.size}")
-        Log.i(TAG, "onNewIncomingMessageHistory: list -> ${magicalIncomingMessageHistoryList.toString()}")
+        Log.i(TAG, "onNewIncomingMessageHistory: list... ")
+        for (magicalIncomingMessage in magicalIncomingMessageHistoryList)
+            Log.i(TAG, "onNewIncomingMessageHistory: $magicalIncomingMessage")
 
         addItemIntoBoard("IncomingMessageHistory: ${magicalIncomingMessageHistoryList.size}")
     }

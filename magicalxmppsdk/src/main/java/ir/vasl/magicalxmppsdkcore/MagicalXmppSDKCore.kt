@@ -12,7 +12,7 @@ import ir.vasl.magicalxmppsdkcore.repository.globalInterface.MessagingBridgeInte
 import ir.vasl.magicalxmppsdkcore.repository.globalInterface.MessagingHistoryInterface
 import ir.vasl.magicalxmppsdkcore.repository.helper.connectionBridge.SmackConnectionBridge
 import ir.vasl.magicalxmppsdkcore.repository.helper.messagingBridge.SmackMessagingBridge
-import ir.vasl.magicalxmppsdkcore.repository.helper.messagingBridge.SmackMessagingHistoryBridge
+import ir.vasl.magicalxmppsdkcore.repository.helper.messagingBridge.SmackMessagingHistoryV2Bridge
 import ir.vasl.magicalxmppsdkcore.repository.helper.networkBridge.NetworkStatusTracker
 import ir.vasl.magicalxmppsdkcore.repository.model.MagicalIncomingMessage
 import ir.vasl.magicalxmppsdkcore.repository.model.MagicalOutgoingMessage
@@ -35,7 +35,9 @@ class MagicalXmppSDKCore private constructor(context: Context, builder: Builder)
 
     private lateinit var smackConnectionBridgeInstance: SmackConnectionBridge
     private lateinit var smackMessagingBridgeInstance: SmackMessagingBridge
-    private lateinit var smackMessagingHistoryBridgeInstance: SmackMessagingHistoryBridge
+
+    // private lateinit var smackMessagingHistoryBridgeInstance: SmackMessagingHistoryBridge
+    private lateinit var smackMessagingHistoryV2BridgeInstance: SmackMessagingHistoryV2Bridge
 
     data class Builder(val context: Context) {
 
@@ -162,14 +164,14 @@ class MagicalXmppSDKCore private constructor(context: Context, builder: Builder)
     private fun runMessagingHistoryBridge(connectionStatus: ConnectionStatus) {
 
         // TODO: 7/20/21 Prevent from initializing new instance ( this should be singleton )
-        if (this::smackMessagingHistoryBridgeInstance.isInitialized)
+        if (this::smackMessagingHistoryV2BridgeInstance.isInitialized)
             return
 
         if (connectionStatus == ConnectionStatus.AUTHENTICATED) {
             Log.i(TAG, "runMessagingHistoryBridge | Instance hashCode: ${hashCode()}")
 
             val connection = smackConnectionBridgeInstance.getConnectionInstance()
-            smackMessagingHistoryBridgeInstance = SmackMessagingHistoryBridge.Builder(connection)
+            smackMessagingHistoryV2BridgeInstance = SmackMessagingHistoryV2Bridge.Builder(connection)
                 .setDomain(domain)
                 .setMessageCount(DEFAULT_MESSAGE_COUNT)
                 .setCallback(object : MessagingHistoryInterface {
@@ -197,10 +199,10 @@ class MagicalXmppSDKCore private constructor(context: Context, builder: Builder)
     }
 
     fun getMessageHistory(target: String) {
-        if (::smackMessagingHistoryBridgeInstance.isInitialized)
-            smackMessagingHistoryBridgeInstance.getMessageHistory(target)
+        if (::smackMessagingHistoryV2BridgeInstance.isInitialized)
+            smackMessagingHistoryV2BridgeInstance.getMessageHistory(target)
         else
-            Log.i(TAG, "getMessageHistory: smackMessagingHistoryBridgeInstance.isInitialized: false")
+            Log.i(TAG, "getMessageHistory: smackMessagingHistoryV2BridgeInstance.isInitialized: false")
     }
 
     fun getConnectionStatus(): ConnectionStatus {
@@ -217,8 +219,8 @@ class MagicalXmppSDKCore private constructor(context: Context, builder: Builder)
         if (::smackMessagingBridgeInstance.isInitialized)
             smackMessagingBridgeInstance.disconnect()
 
-        if (::smackMessagingHistoryBridgeInstance.isInitialized)
-            smackMessagingHistoryBridgeInstance.disconnect()
+        if (::smackMessagingHistoryV2BridgeInstance.isInitialized)
+            smackMessagingHistoryV2BridgeInstance.disconnect()
 
         jobParent.cancel()
         jobNetworkTracker.cancel()
