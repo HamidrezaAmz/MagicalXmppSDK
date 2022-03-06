@@ -10,8 +10,8 @@ android {
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 32
-        versionName "1.0.33"
+        versionCode 34
+        versionName "1.0.34"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -70,7 +70,7 @@ afterEvaluate {
                 from components.release
                 groupId = 'com.github.hamidrezaamz'
                 artifactId = 'MagicalXmppSdk'
-                version = '1.0.33'
+                version = '1.0.34'
             }
         }
     }

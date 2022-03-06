@@ -54,8 +54,6 @@ class SmackMessagingHistoryV2Bridge private constructor(
             currTarget = target
             Log.i(TAG, "getMessageHistoryLastPage: currTarget: $currTarget")
 
-            val lastJitsiMessageId = mamManager.messageUidOfLatestMessage
-
             mamQueryArgs = MamManager.MamQueryArgs.builder()
                 .limitResultsToJid(getJid(target))
                 .queryLastPage()
@@ -122,6 +120,15 @@ class SmackMessagingHistoryV2Bridge private constructor(
             getMessageHistoryLastPage(target) // new chat!
         else
             getChatHistoryPreviousPage()
+    }
+
+    fun getMessageFuture(target: String) {
+        if (::mamQueryArgs.isInitialized.not())
+            getMessageHistoryLastPage(target)
+        else if (currTarget != target)
+            getMessageHistoryLastPage(target) // new chat!
+        else
+            getChatHistoryNextPage()
     }
 
     fun disconnect() {
