@@ -9,6 +9,6 @@ interface MagicalXmppSDKInterface {
     fun onNetworkStatusChanged(networkStatus: NetworkStatus)
     fun onConnectionStatusChanged(connectionStatus: ConnectionStatus)
     fun onNewIncomingMessage(magicalIncomingMessage: MagicalIncomingMessage)
-    fun onNewIncomingMessageHistory(magicalIncomingMessageHistoryList: List<MagicalIncomingMessage>)
+    fun onNewIncomingMessageHistory(magicalIncomingMessageHistoryList: MutableList<MagicalIncomingMessage>)
     fun onNewOutgoingMessage(magicalOutgoingMessage: MagicalOutgoingMessage)
 }

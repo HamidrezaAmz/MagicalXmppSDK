@@ -67,7 +67,7 @@ class SmackMessagingHistoryBridge private constructor(
                     from = it.from.toString()
                 )
             }
-            messagingHistoryInterface?.newIncomingMessageHistory(messageHistoryList)
+            messagingHistoryInterface?.newIncomingMessageHistory(messageHistoryList as MutableList<MagicalIncomingMessage>)
         } catch (e: Exception) {
             messagingHistoryInterface?.newIncomingMessageHistoryError(e.message.toString())
         }
@@ -86,7 +86,7 @@ class SmackMessagingHistoryBridge private constructor(
                         from = it.from.toString()
                     )
                 }
-                messagingHistoryInterface?.newIncomingMessageHistory(messageHistoryList)
+                messagingHistoryInterface?.newIncomingMessageHistory(messageHistoryList as MutableList<MagicalIncomingMessage>)
             } else {
                 Log.i(TAG, "getChatHistoryNextPage: All messages has been returned!")
             }

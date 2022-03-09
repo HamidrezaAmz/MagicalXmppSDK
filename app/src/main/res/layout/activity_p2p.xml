@@ -35,24 +35,35 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/textView_network_status" />
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/button_connect"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:id="@+id/linearLayout_connection_holder"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="CONNECT"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:orientation="horizontal"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/textView_connection_status" />
+            app:layout_constraintTop_toBottomOf="@id/textView_connection_status">
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/button_disconnect"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="DISCONNECT"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/button_connect" />
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/button_connect"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="CONNECT"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/linearLayout_connection_holder" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/button_disconnect"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="DISCONNECT"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/button_connect" />
+
+        </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/button_new_message"
@@ -61,16 +72,58 @@
             android:text="SEND NEW MESSAGE"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/button_disconnect" />
+            app:layout_constraintTop_toBottomOf="@id/linearLayout_connection_holder" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/button_chat_history"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="GET CHAT HISTORY"
+            android:text="GET CHAT HISTORY AUTOMATIC"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/button_new_message" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/button_chat_last_page_history"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="GET CHAT LAST PAGE HISTORY"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/button_chat_history" />
+
+        <LinearLayout
+            android:id="@+id/linearLayout_history_id_base_holder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/button_chat_last_page_history">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/button_chat_history_before_id"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="GET HISTORY BEFORE"
+                android:textSize="10sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/linearLayout_connection_holder" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/button_chat_history_after_id"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="GET HISTORY AFTER"
+                android:textSize="10sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/button_connect" />
+
+        </LinearLayout>
 
         <ScrollView
             android:layout_width="0dp"
@@ -80,7 +133,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/button_chat_history">
+            app:layout_constraintTop_toBottomOf="@id/linearLayout_history_id_base_holder">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/appCompatTextView_board"

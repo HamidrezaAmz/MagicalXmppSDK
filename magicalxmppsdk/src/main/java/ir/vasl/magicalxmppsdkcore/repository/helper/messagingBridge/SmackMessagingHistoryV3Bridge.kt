@@ -11,7 +11,7 @@ import org.jivesoftware.smackx.mam.MamManager
 import org.jxmpp.jid.Jid
 import org.jxmpp.jid.impl.JidCreate
 
-class SmackMessagingHistoryV2Bridge private constructor(
+class SmackMessagingHistoryV3Bridge private constructor(
     private var connection: AbstractXMPPConnection,
     builder: Builder
 ) {
@@ -42,35 +42,11 @@ class SmackMessagingHistoryV2Bridge private constructor(
             this.messagingHistoryInterface = messagingHistoryInterface
         }
 
-        fun build() = SmackMessagingHistoryV2Bridge(connection, this)
+        fun build() = SmackMessagingHistoryV3Bridge(connection, this)
     }
 
     private fun getJid(target: String): Jid? {
         return JidCreate.from("$target@$domain")
-    }
-
-    private fun getMessageHistoryLastPage(target: String) {
-        try {
-            currTarget = target
-            Log.i(TAG, "getMessageHistoryLastPage: currTarget: $currTarget")
-
-            mamQueryArgs = MamManager.MamQueryArgs.builder()
-                .limitResultsToJid(getJid(target))
-                .queryLastPage()
-                .setResultPageSize(messageCount)
-                .build()
-            mamQuery = mamManager.queryArchive(mamQueryArgs)
-            val messageHistoryList: List<MagicalIncomingMessage> = mamQuery.messages.map {
-                MagicalIncomingMessage(
-                    id = IdGeneratorHelper.getRandomId(),
-                    message = it?.body ?: "No Message Found!",
-                    from = it.from.toString()
-                )
-            }
-            messagingHistoryInterface?.newIncomingMessageHistory(messageHistoryList as MutableList<MagicalIncomingMessage>)
-        } catch (e: Exception) {
-            messagingHistoryInterface?.newIncomingMessageHistoryError(e.message.toString())
-        }
     }
 
     private fun getChatHistoryNextPage() {
@@ -129,6 +105,94 @@ class SmackMessagingHistoryV2Bridge private constructor(
             getMessageHistoryLastPage(target) // new chat!
         else
             getChatHistoryNextPage()
+    }
+
+    fun getMessageHistoryLastPage(target: String) {
+        try {
+            currTarget = target
+            Log.i(TAG, "getMessageHistoryLastPage: currTarget: $currTarget")
+
+            mamQueryArgs = MamManager.MamQueryArgs.builder()
+                .limitResultsToJid(getJid(target))
+                .queryLastPage()
+                .setResultPageSize(messageCount)
+                .build()
+            mamQuery = mamManager.queryArchive(mamQueryArgs)
+
+            val messages = mamQuery.messages
+            val extensions = mamQuery.mamResultExtensions
+
+            val zippedList = messages.zip(extensions)
+            val messageHistoryList: List<MagicalIncomingMessage> = zippedList.map { pair ->
+                MagicalIncomingMessage(
+                    id = pair.second.id ?: IdGeneratorHelper.getRandomId(),
+                    message = pair.first?.body ?: "No Message Found!",
+                    from = pair.first.from.toString()
+                )
+            }
+
+            messagingHistoryInterface?.newIncomingMessageHistory(messageHistoryList as MutableList<MagicalIncomingMessage>)
+        } catch (e: Exception) {
+            messagingHistoryInterface?.newIncomingMessageHistoryError(e.message.toString())
+        }
+    }
+
+    fun getMessageAfterId(target: String, Uid: String) {
+        try {
+            currTarget = target
+            Log.i(TAG, "getMessageAfterId: currTarget: $currTarget")
+
+            mamQueryArgs = MamManager.MamQueryArgs.builder()
+                .limitResultsToJid(getJid(target))
+                .afterUid(Uid)
+                .setResultPageSize(messageCount)
+                .build()
+            mamQuery = mamManager.queryArchive(mamQueryArgs)
+
+            val messages = mamQuery.messages
+            val extensions = mamQuery.mamResultExtensions
+
+            val zippedList = messages.zip(extensions)
+            val messageHistoryList: List<MagicalIncomingMessage> = zippedList.map { pair ->
+                MagicalIncomingMessage(
+                    id = pair.second.id ?: IdGeneratorHelper.getRandomId(),
+                    message = pair.first?.body ?: "No Message Found!",
+                    from = pair.first.from.toString()
+                )
+            }
+            messagingHistoryInterface?.newIncomingMessageHistory(messageHistoryList as MutableList<MagicalIncomingMessage>)
+        } catch (e: Exception) {
+            messagingHistoryInterface?.newIncomingMessageHistoryError(e.message.toString())
+        }
+    }
+
+    fun getMessageBeforeId(target: String, Uid: String) {
+        try {
+            currTarget = target
+            Log.i(TAG, "getMessageAfterId: currTarget: $currTarget")
+
+            mamQueryArgs = MamManager.MamQueryArgs.builder()
+                .limitResultsToJid(getJid(target))
+                .beforeUid(Uid)
+                .setResultPageSize(messageCount)
+                .build()
+            mamQuery = mamManager.queryArchive(mamQueryArgs)
+
+            val messages = mamQuery.messages
+            val extensions = mamQuery.mamResultExtensions
+
+            val zippedList = messages.zip(extensions)
+            val messageHistoryList: List<MagicalIncomingMessage> = zippedList.map { pair ->
+                MagicalIncomingMessage(
+                    id = pair.second.id ?: IdGeneratorHelper.getRandomId(),
+                    message = pair.first?.body ?: "No Message Found!",
+                    from = pair.first.from.toString()
+                )
+            }
+            messagingHistoryInterface?.newIncomingMessageHistory(messageHistoryList as MutableList<MagicalIncomingMessage>)
+        } catch (e: Exception) {
+            messagingHistoryInterface?.newIncomingMessageHistoryError(e.message.toString())
+        }
     }
 
     fun disconnect() {

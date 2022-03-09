@@ -12,6 +12,7 @@ import ir.vasl.magicalxmppsdkcore.repository.globalInterface.MagicalXmppSDKInter
 import ir.vasl.magicalxmppsdkcore.repository.helper.IdGeneratorHelper
 import ir.vasl.magicalxmppsdkcore.repository.model.MagicalIncomingMessage
 import ir.vasl.magicalxmppsdkcore.repository.model.MagicalOutgoingMessage
+import java.util.*
 
 class P2PActivity : AppCompatActivity(), MagicalXmppSDKInterface {
 
@@ -19,6 +20,8 @@ class P2PActivity : AppCompatActivity(), MagicalXmppSDKInterface {
 
     private lateinit var binding: ActivityP2pBinding
     private lateinit var magicalXmppSDKInstance: MagicalXmppSDKCore
+
+    private var messages: ArrayList<MagicalIncomingMessage> = arrayListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +49,28 @@ class P2PActivity : AppCompatActivity(), MagicalXmppSDKInterface {
             getMessageHistory()
         }
 
+        binding.buttonChatLastPageHistory.setOnClickListener {
+            getMessageHistoryLastPage()
+        }
+        binding.buttonChatHistoryBeforeId.setOnClickListener {
+
+            if (messages.size <= 0)
+                return@setOnClickListener
+
+            Log.i(TAG, "getMessageHistoryBeforeId: ${messages[messages.size - 1].message}")
+            val uid = messages[messages.size - 1].id
+            getMessageHistoryBeforeId(uid)
+        }
+        binding.buttonChatHistoryAfterId.setOnClickListener {
+
+            if (messages.size <= 0)
+                return@setOnClickListener
+
+            Log.i(TAG, "getMessageHistoryAfterId: ${messages[0].message}")
+            val uid = messages[messages.size - 1].id
+            getMessageHistoryAfterId(uid)
+        }
+
         initializeXMPPSDK()
     }
 
@@ -55,21 +80,28 @@ class P2PActivity : AppCompatActivity(), MagicalXmppSDKInterface {
 
     override fun onConnectionStatusChanged(connectionStatus: ConnectionStatus) {
         binding.textViewConnectionStatus.text = "Connection Status: ${connectionStatus.value}"
-        if (connectionStatus == ConnectionStatus.AUTHENTICATED)
-            magicalXmppSDKInstance.getMessageHistory(PublicValue.TEST_TARGET_USERNAME)
     }
 
     override fun onNewIncomingMessage(magicalIncomingMessage: MagicalIncomingMessage) {
-        addItemIntoBoard("Incoming: $magicalIncomingMessage")
+        Log.i(TAG, "onNewIncomingMessage...")
+        Log.i(TAG, "$magicalIncomingMessage")
+
+        addItemIntoBoard("onNewIncomingMessage: $magicalIncomingMessage")
     }
 
-    override fun onNewIncomingMessageHistory(magicalIncomingMessageHistoryList: List<MagicalIncomingMessage>) {
+    override fun onNewIncomingMessageHistory(magicalIncomingMessageHistoryList: MutableList<MagicalIncomingMessage>) {
+        magicalIncomingMessageHistoryList.reverse()
+        messages.addAll(magicalIncomingMessageHistoryList)
+
         Log.i(TAG, "onNewIncomingMessageHistory: size -> ${magicalIncomingMessageHistoryList.size}")
         Log.i(TAG, "onNewIncomingMessageHistory: list... ")
-        for (magicalIncomingMessage in magicalIncomingMessageHistoryList)
-            Log.i(TAG, "onNewIncomingMessageHistory: $magicalIncomingMessage")
 
-        addItemIntoBoard("IncomingMessageHistory: ${magicalIncomingMessageHistoryList.size}")
+        for (magicalIncomingMessage in magicalIncomingMessageHistoryList) {
+            Log.i(TAG, "onNewIncomingMessageHistory: $magicalIncomingMessage")
+            addItemIntoBoard("Message: ${magicalIncomingMessage.message}")
+        }
+
+        addItemIntoBoard("IncomingMessageHistory size: ${magicalIncomingMessageHistoryList.size}")
     }
 
     override fun onNewOutgoingMessage(magicalOutgoingMessage: MagicalOutgoingMessage) {
@@ -87,12 +119,12 @@ class P2PActivity : AppCompatActivity(), MagicalXmppSDKInterface {
             .build()
     }
 
-    private fun sendNewMessage() {
+    private fun sendNewMessage(newMessageCode: String? = null) {
 
         if (!::magicalXmppSDKInstance.isInitialized)
             return
 
-        val messageCode = IdGeneratorHelper.getRandomId()
+        val messageCode = newMessageCode ?: IdGeneratorHelper.getRandomId()
         magicalXmppSDKInstance.sendNewMessage(
             MagicalOutgoingMessage(
                 id = IdGeneratorHelper.getRandomId(),
@@ -109,6 +141,27 @@ class P2PActivity : AppCompatActivity(), MagicalXmppSDKInterface {
             return
 
         magicalXmppSDKInstance.getMessageHistory(PublicValue.TEST_TARGET_USERNAME)
+    }
+
+    private fun getMessageHistoryLastPage() {
+        if (::magicalXmppSDKInstance.isInitialized.not())
+            return
+
+        magicalXmppSDKInstance.getMessageHistoryLastPage(PublicValue.TEST_TARGET_USERNAME)
+    }
+
+    private fun getMessageHistoryBeforeId(Uid: String) {
+        if (::magicalXmppSDKInstance.isInitialized.not())
+            return
+
+        magicalXmppSDKInstance.getMessageHistoryBeforeId(PublicValue.TEST_TARGET_USERNAME, Uid)
+    }
+
+    private fun getMessageHistoryAfterId(Uid: String) {
+        if (::magicalXmppSDKInstance.isInitialized.not())
+            return
+
+        magicalXmppSDKInstance.getMessageHistoryAfterId(PublicValue.TEST_TARGET_USERNAME, Uid)
     }
 
     override fun onDestroy() {

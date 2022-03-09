@@ -88,7 +88,7 @@ class MucActivity : AppCompatActivity(), MagicalXmppSDKInterface {
         addItemIntoBoard("Incoming: $magicalIncomingMessage")
     }
 
-    override fun onNewIncomingMessageHistory(magicalIncomingMessageHistoryList: List<MagicalIncomingMessage>) {
+    override fun onNewIncomingMessageHistory(magicalIncomingMessageHistoryList: MutableList<MagicalIncomingMessage>) {
         Log.i(TAG, "onNewIncomingMessageHistory: size -> ${magicalIncomingMessageHistoryList.size}")
     }
 
